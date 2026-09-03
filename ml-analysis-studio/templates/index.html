@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>ML Analysis Studio</title>
+
+    <link
+        rel="stylesheet"
+        href="/static/style.css"
+    >
+
+</head>
+
+
+<body>
+
+<div class="container">
+
+    <header>
+
+        <h1>🤖 ML Analysis Studio</h1>
+
+        <p>
+            Upload your dataset, analyze it,
+            and build a machine learning model.
+        </p>
+
+    </header>
+
+
+    <!-- STEP 1 -->
+
+    <section class="card">
+
+        <h2>1. Upload Dataset</h2>
+
+        <p>Select a CSV dataset to begin.</p>
+
+        <input
+            type="file"
+            id="fileInput"
+            accept=".csv"
+        >
+
+        <button id="analyzeButton">
+            Analyze Dataset
+        </button>
+
+    </section>
+
+
+    <!-- LOADING -->
+
+    <div
+        id="loading"
+        class="loading"
+        style="display:none;"
+    >
+        ⏳ Analyzing your dataset...
+    </div>
+
+
+    <!-- ERROR -->
+
+    <div
+        id="error"
+        class="error"
+        style="display:none;"
+    ></div>
+
+
+    <!-- STEP 2 -->
+
+    <section
+        id="overviewSection"
+        class="card"
+        style="display:none;"
+    >
+
+        <h2>2. Dataset Overview</h2>
+
+        <div class="stats">
+
+            <div class="stat-box">
+
+                <h3>Rows</h3>
+
+                <p id="rowCount">-</p>
+
+            </div>
+
+
+            <div class="stat-box">
+
+                <h3>Columns</h3>
+
+                <p id="columnCount">-</p>
+
+            </div>
+
+        </div>
+
+
+        <h3>Column Information</h3>
+
+        <div id="columnInfo"></div>
+
+    </section>
+
+
+    <!-- STEP 3 -->
+
+    <section
+        id="targetSection"
+        class="card"
+        style="display:none;"
+    >
+
+        <h2>3. Target Column</h2>
+
+        <p>
+            Select the column you want the
+            machine learning model to predict.
+        </p>
+
+
+        <div id="targetSuggestions"></div>
+
+
+        <label for="targetSelect">
+            Select Target Column:
+        </label>
+
+
+        <select id="targetSelect">
+
+            <option value="">
+                -- Select Target --
+            </option>
+
+        </select>
+
+
+        <button
+            id="continueButton"
+            disabled
+        >
+            Continue
+        </button>
+
+    </section>
+
+
+    <!-- STEP 4 -->
+
+    <section
+        id="problemSection"
+        class="card"
+        style="display:none;"
+    >
+
+        <h2>4. Problem Type</h2>
+
+        <div id="problemType"></div>
+
+        <p id="problemDescription"></p>
+
+    </section>
+
+
+    <!-- STEP 5 -->
+
+    <section
+        id="modelSection"
+        class="card"
+        style="display:none;"
+    >
+
+        <h2>5. Select Machine Learning Model</h2>
+
+
+        <label for="modelSelect">
+            Select Model:
+        </label>
+
+
+        <select id="modelSelect">
+
+            <option value="">
+                -- Select Model --
+            </option>
+
+        </select>
+
+
+        <button id="trainButton">
+            Train Model
+        </button>
+
+    </section>
+
+
+    <!-- STEP 6 -->
+
+    <section
+        id="resultsSection"
+        class="card"
+        style="display:none;"
+    >
+
+        <h2>6. Model Results</h2>
+
+        <div id="modelResults"></div>
+
+    </section>
+
+</div>
+
+
+<script src="/static/script.js"></script>
+
+</body>
+
+</html>
