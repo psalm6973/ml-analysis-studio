@@ -1,0 +1,16 @@
+# Python virtual environment
+myenv/
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Generated trained models
+models/*.joblib
+models/*.pkl
+
+# Local/test files
+iris.csv
+
+# Old training script
+train_model.py
