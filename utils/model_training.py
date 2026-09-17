@@ -33,7 +33,6 @@ from utils.preprocessing import (
 )
 
 
-# Maximum number of features shown to the user
 MAX_PREDICTION_FEATURES = 5
 
 
@@ -53,7 +52,7 @@ def get_problem_type(df, target_column):
     ):
         return "classification"
 
-    elif pd.api.types.is_numeric_dtype(target):
+    if pd.api.types.is_numeric_dtype(target):
 
         if unique_values <= 10:
             return "classification"
@@ -91,11 +90,9 @@ def create_model(model_name):
 
         return LinearRegression()
 
-    else:
-
-        raise ValueError(
-            f"Unknown model: {model_name}"
-        )
+    raise ValueError(
+        f"Unknown model: {model_name}"
+    )
 
 
 def calculate_feature_importance(
@@ -103,13 +100,6 @@ def calculate_feature_importance(
     y,
     problem_type
 ):
-    """
-    Calculate an importance score for each
-    original feature.
-
-    This allows us to select a small number
-    of useful features for the prediction form.
-    """
 
     importance_scores = {}
 
@@ -150,12 +140,10 @@ def calculate_feature_importance(
                 or pd.api.types.is_bool_dtype(data)
             ):
 
-                # Fill missing values
                 data = data.fillna(
                     "Missing"
                 )
 
-                # Convert categories to numbers
                 encoded_data = pd.Series(
                     pd.factorize(data)[0],
                     index=data.index
@@ -227,8 +215,6 @@ def calculate_feature_importance(
 
         except Exception:
 
-            # If a feature causes an issue,
-            # simply give it zero importance.
             importance_scores[column] = 0.0
 
     return importance_scores
@@ -241,6 +227,40 @@ def make_feature_schema(X):
     for column in X.columns:
 
         data = X[column]
+
+        # Pclass is numeric internally,
+        # but should appear as a dropdown
+        # in the prediction form.
+        if column.lower() == "pclass":
+
+            values = (
+                data
+                .dropna()
+                .unique()
+                .tolist()
+            )
+
+            values.sort()
+
+            clean_values = []
+
+            for value in values:
+
+                if hasattr(value, "item"):
+                    value = value.item()
+
+                clean_values.append(
+                    value
+                )
+
+            feature_schema.append({
+                "name": column,
+                "type": "number",
+                "input_type": "select",
+                "options": clean_values
+            })
+
+            continue
 
         # Numerical feature
         if pd.api.types.is_numeric_dtype(
@@ -273,6 +293,7 @@ def make_feature_schema(X):
             feature_schema.append({
                 "name": column,
                 "type": "number",
+                "input_type": "number",
                 "min": minimum,
                 "max": maximum,
                 "default": default
@@ -292,10 +313,7 @@ def make_feature_schema(X):
 
             for value in values:
 
-                if hasattr(
-                    value,
-                    "item"
-                ):
+                if hasattr(value, "item"):
                     value = value.item()
 
                 clean_values.append(
@@ -309,6 +327,7 @@ def make_feature_schema(X):
             feature_schema.append({
                 "name": column,
                 "type": "category",
+                "input_type": "select",
                 "options": clean_values
             })
 
@@ -327,7 +346,7 @@ def train_model(
         target_column
     )
 
-    # Prepare initial features
+    # Prepare features
     X, y, _ = preprocess_data(
         df,
         target_column
@@ -351,7 +370,7 @@ def train_model(
         "linear_regression"
     ]
 
-    # Check model compatibility
+    # Validate selected model
     if (
         problem_type == "classification"
         and model_name not in classification_models
@@ -372,10 +391,7 @@ def train_model(
             "for regression."
         )
 
-    # ------------------------------------------------
-    # Split data
-    # ------------------------------------------------
-
+    # Split dataset
     if problem_type == "classification":
 
         try:
@@ -412,24 +428,20 @@ def train_model(
             )
         )
 
-    # ------------------------------------------------
-    # Find important features
-    # ------------------------------------------------
-
+    # Find feature importance
     importance_scores = calculate_feature_importance(
         X_train,
         y_train,
         problem_type
     )
 
-    # Sort features by importance
     sorted_features = sorted(
         importance_scores.items(),
         key=lambda item: item[1],
         reverse=True
     )
 
-    # Select top 5
+    # Select top features
     selected_features = [
         feature
         for feature, score
@@ -438,17 +450,14 @@ def train_model(
         ]
     ]
 
-    # Preserve original dataset order
+    # Preserve original column order
     selected_features = [
         column
         for column in X.columns
         if column in selected_features
     ]
 
-    # ------------------------------------------------
-    # Train final model using selected features
-    # ------------------------------------------------
-
+    # Selected training/test data
     X_train_selected = X_train[
         selected_features
     ]
@@ -457,14 +466,17 @@ def train_model(
         selected_features
     ]
 
+    # Build final preprocessing pipeline
     final_preprocessor = build_preprocessor(
         X_train_selected
     )
 
+    # Create model
     model = create_model(
         model_name
     )
 
+    # Complete pipeline
     pipeline = Pipeline([
         (
             "preprocessor",
@@ -476,23 +488,18 @@ def train_model(
         )
     ])
 
+    # Train
     pipeline.fit(
         X_train_selected,
         y_train
     )
 
-    # ------------------------------------------------
-    # Test model
-    # ------------------------------------------------
-
+    # Predict test set
     predictions = pipeline.predict(
         X_test_selected
     )
 
-    # ------------------------------------------------
-    # Classification metrics
-    # ------------------------------------------------
-
+    # Metrics
     if problem_type == "classification":
 
         accuracy = accuracy_score(
@@ -552,10 +559,6 @@ def train_model(
 
             reliability = "needs_improvement"
 
-    # ------------------------------------------------
-    # Regression metrics
-    # ------------------------------------------------
-
     else:
 
         mae = mean_absolute_error(
@@ -606,10 +609,7 @@ def train_model(
 
             reliability = "needs_improvement"
 
-    # ------------------------------------------------
     # Feature types
-    # ------------------------------------------------
-
     feature_types = {}
 
     for column in selected_features:
@@ -624,17 +624,10 @@ def train_model(
 
             feature_types[column] = "category"
 
-    # ------------------------------------------------
     # Feature schema
-    # ------------------------------------------------
-
     feature_schema = make_feature_schema(
         X_train_selected
     )
-
-    # ------------------------------------------------
-    # Return result
-    # ------------------------------------------------
 
     return {
         "problem_type": problem_type,

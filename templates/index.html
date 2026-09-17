@@ -1,232 +1,685 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
     <meta charset="UTF-8">
-
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>ML Analysis Studio</title>
 
-    <link
-        rel="stylesheet"
-        href="/static/style.css"
-    >
-
+    <link rel="stylesheet" href="/static/style.css">
 </head>
-
 
 <body>
 
-<div class="container">
+<!-- =========================================================
+     APP
+========================================================= -->
 
-    <header>
+<div class="app">
 
-        <h1>🤖 ML Analysis Studio</h1>
 
-        <p>
-            Upload your dataset, analyze it,
-            and build a machine learning model.
-        </p>
+    <!-- =====================================================
+         TOP BAR
+    ====================================================== -->
+
+    <header class="topbar">
+
+        <div class="brand">
+            <div class="brand-mark">ML</div>
+
+            <div>
+                <h1>Analysis Studio</h1>
+                <span>Machine Learning Workspace</span>
+            </div>
+        </div>
+
+        <div class="step-indicator">
+
+            <span class="step-dot active"></span>
+            <span class="step-line"></span>
+
+            <span class="step-dot"></span>
+            <span class="step-line"></span>
+
+            <span class="step-dot"></span>
+            <span class="step-line"></span>
+
+            <span class="step-dot"></span>
+            <span class="step-line"></span>
+
+            <span class="step-dot"></span>
+            <span class="step-line"></span>
+
+            <span class="step-dot"></span>
+
+        </div>
 
     </header>
 
 
-    <!-- STEP 1 -->
+    <!-- =====================================================
+         MAIN CONTENT
+    ====================================================== -->
 
-    <section class="card">
+    <main class="main-content">
 
-        <h2>1. Upload Dataset</h2>
 
-        <p>Select a CSV dataset to begin.</p>
+        <!-- =================================================
+             LANDING PAGE
+        ================================================== -->
 
-        <input
-            type="file"
-            id="fileInput"
-            accept=".csv"
+        <section id="landingPage" class="page active-page">
+
+            <div class="hero">
+
+                <div class="hero-badge">
+                    <span>✦</span>
+                    Intelligent Data Analysis
+                </div>
+
+                <h2>
+                    Turn Your Data<br>
+                    <span>Into Insights.</span>
+                </h2>
+
+                <p>
+                    Upload your dataset, discover meaningful patterns,
+                    train a machine learning model, and make predictions —
+                    all from one simple workspace.
+                </p>
+
+                <button id="getStartedButton" class="primary-button">
+                    Get Started
+                    <span>→</span>
+                </button>
+
+                <div class="workflow">
+
+                    <div class="workflow-item">
+                        <div class="workflow-icon">↑</div>
+                        <span>Upload</span>
+                    </div>
+
+                    <div class="workflow-arrow">→</div>
+
+                    <div class="workflow-item">
+                        <div class="workflow-icon">⌕</div>
+                        <span>Explore</span>
+                    </div>
+
+                    <div class="workflow-arrow">→</div>
+
+                    <div class="workflow-item">
+                        <div class="workflow-icon">◈</div>
+                        <span>Model</span>
+                    </div>
+
+                    <div class="workflow-arrow">→</div>
+
+                    <div class="workflow-item">
+                        <div class="workflow-icon">✓</div>
+                        <span>Predict</span>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             UPLOAD PAGE
+        ================================================== -->
+
+        <section id="uploadPage" class="page">
+
+            <div class="page-header">
+
+                <div class="page-number">01</div>
+
+                <div>
+                    <h2>Upload Dataset</h2>
+
+                    <p>
+                        Start by uploading a CSV dataset.
+                    </p>
+                </div>
+
+            </div>
+
+
+            <div class="upload-card">
+
+                <div class="upload-icon">
+                    ↑
+                </div>
+
+                <h3>Upload your CSV file</h3>
+
+                <p>
+                    Choose a dataset from your computer.
+                </p>
+
+                <input
+                    type="file"
+                    id="csvFile"
+                    accept=".csv"
+                >
+
+                <label for="csvFile" class="upload-button">
+                    Choose CSV File
+                </label>
+
+                <div id="selectedFile" class="selected-file">
+                    No file selected
+                </div>
+
+            </div>
+
+
+            <div class="page-actions">
+
+                <button id="analyzeButton" class="primary-button">
+                    Analyze Dataset
+                    <span>→</span>
+                </button>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             LOADING
+        ================================================== -->
+
+        <div
+            id="loading"
+            class="loading-overlay"
+            style="display:none;"
         >
 
-        <button id="analyzeButton">
-            Analyze Dataset
-        </button>
+            <div class="loader"></div>
 
-    </section>
+            <h3>Analyzing your dataset...</h3>
 
-
-    <!-- LOADING -->
-
-    <div
-        id="loading"
-        class="loading"
-        style="display:none;"
-    >
-        ⏳ Analyzing your dataset...
-    </div>
-
-
-    <!-- ERROR -->
-
-    <div
-        id="error"
-        class="error"
-        style="display:none;"
-    ></div>
-
-
-    <!-- STEP 2 -->
-
-    <section
-        id="overviewSection"
-        class="card"
-        style="display:none;"
-    >
-
-        <h2>2. Dataset Overview</h2>
-
-        <div class="stats">
-
-            <div class="stat-box">
-
-                <h3>Rows</h3>
-
-                <p id="rowCount">-</p>
-
-            </div>
-
-
-            <div class="stat-box">
-
-                <h3>Columns</h3>
-
-                <p id="columnCount">-</p>
-
-            </div>
+            <p>
+                Please wait while ML Analysis Studio processes your data.
+            </p>
 
         </div>
 
 
-        <h3>Column Information</h3>
+        <!-- =================================================
+             ERROR
+        ================================================== -->
 
-        <div id="columnInfo"></div>
-
-    </section>
-
-
-    <!-- STEP 3 -->
-
-    <section
-        id="targetSection"
-        class="card"
-        style="display:none;"
-    >
-
-        <h2>3. Target Column</h2>
-
-        <p>
-            Select the column you want the
-            machine learning model to predict.
-        </p>
+        <div
+            id="error"
+            class="global-error"
+            style="display:none;"
+        ></div>
 
 
-        <div id="targetSuggestions"></div>
+        <!-- =================================================
+             OVERVIEW PAGE
+        ================================================== -->
+
+        <section id="overviewPage" class="page">
+
+            <div class="page-header">
+
+                <div class="page-number">02</div>
+
+                <div>
+                    <h2>Dataset Overview</h2>
+
+                    <p>
+                        Here's what your dataset looks like.
+                    </p>
+                </div>
+
+            </div>
 
 
-        <label for="targetSelect">
-            Select Target Column:
-        </label>
+            <div class="stats-grid">
+
+                <div class="stat-card">
+
+                    <span class="stat-label">
+                        Rows
+                    </span>
+
+                    <strong id="rowCount">
+                        -
+                    </strong>
+
+                </div>
 
 
-        <select id="targetSelect">
+                <div class="stat-card">
 
-            <option value="">
-                -- Select Target --
-            </option>
+                    <span class="stat-label">
+                        Columns
+                    </span>
 
-        </select>
+                    <strong id="columnCount">
+                        -
+                    </strong>
 
-
-        <button
-            id="continueButton"
-            disabled
-        >
-            Continue
-        </button>
-
-    </section>
+                </div>
 
 
-    <!-- STEP 4 -->
+                <div class="stat-card">
 
-    <section
-        id="problemSection"
-        class="card"
-        style="display:none;"
-    >
+                    <span class="stat-label">
+                        Missing Values
+                    </span>
 
-        <h2>4. Problem Type</h2>
+                    <strong id="missingCount">
+                        -
+                    </strong>
 
-        <div id="problemType"></div>
+                </div>
 
-        <p id="problemDescription"></p>
-
-    </section>
+            </div>
 
 
-    <!-- STEP 5 -->
+            <div class="content-card">
 
-    <section
-        id="modelSection"
-        class="card"
-        style="display:none;"
-    >
+                <div class="card-title">
+                    <h3>Column Information</h3>
 
-        <h2>5. Select Machine Learning Model</h2>
+                    <span id="columnSummary"></span>
+                </div>
 
+                <div id="columnInfo" class="column-table"></div>
 
-        <label for="modelSelect">
-            Select Model:
-        </label>
+            </div>
 
 
-        <select id="modelSelect">
+            <div class="page-actions">
 
-            <option value="">
-                -- Select Model --
-            </option>
+                <button
+                    id="overviewContinueButton"
+                    class="primary-button"
+                >
+                    Continue
+                    <span>→</span>
+                </button>
 
-        </select>
+            </div>
+
+        </section>
 
 
-        <button id="trainButton">
-            Train Model
-        </button>
+        <!-- =================================================
+             TARGET PAGE
+        ================================================== -->
 
-    </section>
+        <section id="targetPage" class="page">
+
+            <div class="page-header">
+
+                <div class="page-number">03</div>
+
+                <div>
+                    <h2>Choose Your Target</h2>
+
+                    <p>
+                        Select the column your model should predict.
+                    </p>
+                </div>
+
+            </div>
 
 
-    <!-- STEP 6 -->
+            <div class="content-card">
 
-    <section
-        id="resultsSection"
-        class="card"
-        style="display:none;"
-    >
+                <div class="card-title">
 
-        <h2>6. Model Results</h2>
+                    <div>
+                        <h3>Suggested Targets</h3>
 
-        <div id="modelResults"></div>
+                        <p>
+                            These columns look suitable for prediction.
+                        </p>
+                    </div>
 
-    </section>
+                    <span class="recommended-badge">
+                        Recommended
+                    </span>
+
+                </div>
+
+
+                <div
+                    id="targetSuggestions"
+                    class="target-suggestions"
+                ></div>
+
+
+                <div class="manual-target">
+
+                    <label for="targetColumn">
+                        Or choose manually
+                    </label>
+
+                    <select id="targetColumn">
+                        <option value="">
+                            Select target column
+                        </option>
+                    </select>
+
+                </div>
+
+            </div>
+
+
+            <div class="page-actions">
+
+                <button
+                    id="targetContinueButton"
+                    class="primary-button"
+                >
+                    Continue
+                    <span>→</span>
+                </button>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             MODEL PAGE
+        ================================================== -->
+
+        <section id="modelPage" class="page">
+
+            <div class="page-header">
+
+                <div class="page-number">04</div>
+
+                <div>
+                    <h2>Choose Your Model</h2>
+
+                    <p>
+                        Your target determines the machine learning problem.
+                    </p>
+                </div>
+
+            </div>
+
+
+            <div class="problem-card">
+
+                <span class="section-label">
+                    Problem Type
+                </span>
+
+                <div
+                    id="problemType"
+                    class="problem-type"
+                >
+                    -
+                </div>
+
+                <p id="problemDescription"></p>
+
+            </div>
+
+
+            <div class="content-card">
+
+                <div class="card-title">
+
+                    <div>
+                        <h3>Available Models</h3>
+
+                        <p>
+                            Select a model to train.
+                        </p>
+                    </div>
+
+                </div>
+
+
+                <div
+                    id="modelOptions"
+                    class="model-options"
+                ></div>
+
+            </div>
+
+
+            <div class="page-actions">
+
+                <button
+                    id="trainButton"
+                    class="primary-button"
+                >
+                    Train Model
+                    <span>→</span>
+                </button>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             RESULTS PAGE
+        ================================================== -->
+
+        <section id="resultsPage" class="page">
+
+            <div class="page-header">
+
+                <div class="page-number">05</div>
+
+                <div>
+                    <h2>Model Results</h2>
+
+                    <p>
+                        Your trained model has been evaluated.
+                    </p>
+                </div>
+
+            </div>
+
+
+            <div class="model-summary">
+
+                <div>
+                    <span>Target</span>
+                    <strong id="resultTarget">-</strong>
+                </div>
+
+                <div>
+                    <span>Problem</span>
+                    <strong id="resultProblem">-</strong>
+                </div>
+
+                <div>
+                    <span>Model</span>
+                    <strong id="resultModel">-</strong>
+                </div>
+
+            </div>
+
+
+            <div
+                id="reliabilityCard"
+                class="reliability-card"
+            >
+
+                <div class="reliability-icon">
+                    ✓
+                </div>
+
+                <div>
+
+                    <span>Model Reliability</span>
+
+                    <strong id="reliabilityStatus">
+                        -
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <div class="metrics-grid" id="metrics"></div>
+
+
+            <div class="content-card">
+
+                <div class="card-title">
+
+                    <div>
+                        <h3>Important Features</h3>
+
+                        <p>
+                            Features that contributed most to the prediction.
+                        </p>
+                    </div>
+
+                </div>
+
+
+                <div
+                    id="importantFeatures"
+                    class="feature-list"
+                ></div>
+
+            </div>
+
+
+            <div class="page-actions">
+
+                <button
+                    id="predictionContinueButton"
+                    class="primary-button"
+                >
+                    Make a Prediction
+                    <span>→</span>
+                </button>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             PREDICTION PAGE
+        ================================================== -->
+
+        <section id="predictionPage" class="page">
+
+            <div class="page-header">
+
+                <div class="page-number">06</div>
+
+                <div>
+                    <h2>Make a Prediction</h2>
+
+                    <p id="predictionDescription">
+                        Enter the required values below.
+                    </p>
+                </div>
+
+            </div>
+
+
+            <div class="prediction-layout">
+
+                <div class="content-card prediction-card">
+
+                    <div class="card-title">
+
+                        <div>
+                            <h3>Input Features</h3>
+
+                            <p>
+                                Provide values for the selected features.
+                            </p>
+                        </div>
+
+                    </div>
+
+
+                    <div
+                        id="predictionForm"
+                        class="prediction-form"
+                    ></div>
+
+
+                    <button
+                        id="predictButton"
+                        class="primary-button full-button"
+                    >
+                        Predict
+                        <span>→</span>
+                    </button>
+
+
+                    <div
+                        id="predictionError"
+                        class="prediction-error"
+                        style="display:none;"
+                    ></div>
+
+                </div>
+
+
+                <div
+                    id="predictionResult"
+                    class="prediction-result"
+                    style="display:none;"
+                >
+
+                    <div class="result-check">
+                        ✓
+                    </div>
+
+                    <span class="result-label">
+                        Prediction
+                    </span>
+
+                    <h3 id="predictionValue">
+                        -
+                    </h3>
+
+                    <p id="predictionTargetLabel">
+                        -
+                    </p>
+
+                    <button
+                        id="newPredictionButton"
+                        class="secondary-button"
+                    >
+                        New Prediction
+                    </button>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <!-- =====================================================
+         JAVASCRIPT
+    ====================================================== -->
+
+    <script src="/static/script.js"></script>
 
 </div>
 
-
-<script src="/static/script.js"></script>
-
 </body>
-
 </html>

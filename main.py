@@ -157,11 +157,13 @@ def train(
     request: TrainingRequest
 ):
     try:
+
         df = pd.read_csv(
             StringIO(request.csv_text)
         )
 
         if request.target_column not in df.columns:
+
             raise ValueError(
                 f"Target column '{request.target_column}' "
                 "was not found."
@@ -173,7 +175,7 @@ def train(
             request.model_name
         )
 
-        # Save the trained model and information
+        # Save trained model information
         model_data = {
             "model_object": result["model_object"],
             "problem_type": result["problem_type"],
@@ -185,19 +187,28 @@ def train(
             "features": result["features"],
             "feature_types": result["feature_types"],
             "feature_schema": result["feature_schema"]
-}
-        save_model(model_data)
+        }
 
+        save_model(
+            model_data
+        )
+
+        # Send all required information
+        # back to the frontend
         return {
             "problem_type": result["problem_type"],
             "target": result["target"],
             "model": result["model"],
             "metrics": result["metrics"],
             "reliability": result["reliability"],
-            "reliability_score": result["reliability_score"]
+            "reliability_score": result["reliability_score"],
+            "features": result["features"],
+            "feature_types": result["feature_types"],
+            "feature_schema": result["feature_schema"]
         }
 
     except Exception as e:
+
         raise HTTPException(
             status_code=400,
             detail=f"Could not train model: {str(e)}"
